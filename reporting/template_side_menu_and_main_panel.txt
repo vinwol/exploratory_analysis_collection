@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <title>Report</title>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet">
+  <link href="libs/dt-core-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet">
+  <link href="libs/dt-core-1.10.20/css/jquery.dataTables.extra.css" rel="stylesheet">
+  <link href="libs/nouislider-7.0.10/jquery.nouislider.min.css" rel="stylesheet">
+  <link href="libs/selectize-0.12.0/selectize.bootstrap3.css" rel="stylesheet">
+  <link href="libs/crosstalk-1.1.1/css/crosstalk.css" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="libs/htmlwidgets-1.5.3/htmlwidgets.js"></script>
+  <script src="libs/datatables-binding-0.18/datatables.js"></script>
+  <script src="libs/dt-core-1.10.20/js/jquery.dataTables.min.js"></script>
+  <script src="libs/nouislider-7.0.10/jquery.nouislider.min.js"></script>
+  <script src="libs/selectize-0.12.0/selectize.min.js"></script>
+  <script src="libs/crosstalk-1.1.1/js/crosstalk.min.js"></script>
+
+  <style>
+    /* Define a variable for sidebar width for easier management */
+    :root {
+      --sidebar-width: 220px; /* Adjust this value as needed */
+      --sidebar-padding-vertical: 20px; /* Vertical padding inside the sidebar container */
+      --sidebar-padding-horizontal: 15px; /* Horizontal padding inside the sidebar container */
+      --main-content-left-offset: calc(var(--sidebar-width) + var(--sidebar-padding-horizontal)); /* Sidebar's full width for main content offset */
+      --main-content-gap: 30px; /* Desired gap between sidebar and main content block */
+    }
+
+    body {
+      font-family: 'Lato', sans-serif;
+      color: #333;
+      background-color: #f8f9fa; 
+      padding: 0; 
+      margin: 0; 
+      min-height: 100vh; /* Ensure body takes at least full viewport height for consistent background */
+      position: relative; /* Needed for the pseudo-element background */
+    }
+
+    /* Pseudo-element for the white canvas background for the main content area */
+    body::before {
+      content: '';
+      position: fixed; /* Fixed so it doesn't scroll */
+      top: 0;
+      left: var(--main-content-left-offset); /* Starts exactly where sidebar ends */
+      width: calc(100vw - var(--main-content-left-offset)); /* Takes rest of the viewport width */
+      height: 100vh; /* Takes full viewport height */
+      background-color: #fff; 
+      z-index: -1; /* Place it behind other content */
+    }
+
+    /* Headings */
+    h1, h3, h4, h5, h6 { 
+      font-family: 'Merriweather', serif;
+      color: #2c3e50; /* Darker color for headings */
+      margin-top: 30px;
+      margin-bottom: 15px;
+    }
+
+    /* Specific Styling for Section Headers (h2) */
+    h2 {
+      font-family: 'Merriweather', serif; 
+      font-size: 2.2em;
+      color: #34495e;
+      background-color: #eef5ff; 
+      padding: 15px 25px; 
+      border-radius: 8px; 
+      margin-top: 40px; 
+      margin-bottom: 25px; 
+      border-bottom: none; 
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); 
+      display: inline-block; /* Allows padding/margin to wrap content, but takes full width if content allows */
+      width: 100%; /* Ensure it takes full available width */
+      box-sizing: border-box; /* Include padding in width calculation */
+    }
+
+    h4 {
+        color: #555;
+        margin-top: 25px;
+        margin-bottom: 10px;
+    }
+
+    /* Side Menu Styling */
+    #side-menu-container {
+      position: fixed;
+      top: 0; /* Align to the top of the viewport */
+      left: 0; /* Align to the very left of the viewport */
+      width: var(--sidebar-width); /* Set fixed width */
+      height: 100vh; /* Take full height of the viewport */
+      padding: var(--sidebar-padding-vertical) var(--sidebar-padding-horizontal); /* Vertical and Horizontal padding for the container */
+      background-color: #f1f3f5; 
+      box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05); 
+      overflow-y: auto; /* Enable scrolling for long menus */
+      z-index: 1000; /* Ensure it stays on top of other content */
+    }
+
+    #side-menu {
+      border: none;
+      border-radius: 0;
+      padding: 0;
+      background-color: transparent;
+      box-shadow: none;
+      margin: 0;
+      list-style: none; /* Remove default Bootstrap list-style properties if any */
+    }
+
+    #side-menu .nav-pills > li > a {
+      color: #555;
+      padding: 10px 0; /* Adjust padding for menu items - horizontal padding comes from #side-menu-container */
+      border-radius: 0;
+      transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+    }
+
+    #side-menu .nav-pills > li > a:hover {
+      background-color: #e0e6ed;
+      color: #333;
+    }
+
+    #side-menu .nav-pills > li.active > a,
+    #side-menu .nav-pills > li.active > a:hover,
+    #side-menu .nav-pills > li.active > a:focus {
+      color: #fff;
+      background-color: #007bff;
+      border-radius: 0;
+    }
+
+    /* Main Content Area */
+    .report-main-content {
+      /* Pushed right by sidebar's full width + desired gap */
+      margin-left: calc(var(--main-content-left-offset) + var(--main-content-gap));
+      margin-right: auto; /* Center the content block within the remaining space */
+      max-width: 1100px; /* Adjusted max-width for content to fit nicely */
+      background-color: #fff; 
+      /* border-radius: 8px; */
+      /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); */
+      padding: 30px; /* Padding inside the content area */
+      margin-top: 20px; /* Top margin for the content block itself */
+      margin-bottom: 20px; /* Bottom margin for the content block itself */
+      box-sizing: border-box; /* Include padding and border in the element's total width */
+    }
+
+    /* Title Element Styling */
+    .title-element {
+      text-align: center;
+      margin-bottom: 40px;
+      padding: 20px 0;
+      background-color: #c0dfff; 
+      border-radius: 5px;
+      border-bottom: 1px solid #e9ecef;
+    }
+
+    .title-element h1 {
+        color: #222; 
+        font-weight: 700;
+        margin-bottom: 5px;
+        border-bottom: none;
+    }
+
+    .title-element h4 {
+        color: #666;
+        margin-top: 5px;
+        margin-bottom: 5px;
+        font-weight: 400;
+    }
+
+    /* Section Styling */
+    section {
+      padding-top: 30px;
+      margin-bottom: 40px;
+    }
+
+    /* Image Styling */
+    img.img-responsive {
+      display: block;
+      max-width: 100%;
+      height: auto !important;
+      border-radius: 5px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      margin: 20px auto;
+    }
+
+    /* Table Styling for individual html-table objects */
+    .html-table {
+      height: auto;
+      width: 100%;
+      overflow: hidden;
+      min-height: 100px;
+      margin-bottom: 25px;
+      border: 1px solid #e9ecef;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+    }
+
+    .html-table object {
+      display: block;
+    }
+
+    /* DataTables Specific Styling (to make them blend better) */
+    .dataTables_wrapper {
+        padding: 15px;
+        background-color: #fdfdfd;
+        border-radius: 5px;
+        box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    /* Horizontal Tables Container */
+   .horizontal-tables {
+      display: flex;
+      justify-content: flex-start; /* Align tables to the left */
+      flex-wrap: nowrap; /* Prevent wrapping to keep tables on same line */
+      gap: 20px;
+      background-color: #fff; 
+      padding: 20px;
+      border-radius: 8px; 
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); 
+      margin-bottom: 25px;
+      width: fit-content; /* Container adjusts to content width */
+      min-width: 100%; /* Ensure minimum width is full available space */
+      max-width: none; /* Allow container to grow beyond parent if needed */
+      box-sizing: border-box;
+      overflow-x: auto; /* Allow horizontal scrolling if tables are very wide */
+    }
+    
+    .horizontal-tables table {
+      flex: 0 0 auto; /* Don't grow or shrink, use natural size */
+      min-width: 300px; /* Minimum width for readability */
+      max-width: none; /* Remove max-width constraint */
+      box-sizing: border-box;
+      border-spacing: 0; 
+      border-collapse: collapse;
+      width: auto; /* Allow tables to use their natural width */
+    }
+
+    /* Custom classes from original CSS - refined */
+    .floated-table {
+      float: left;
+    }
+
+    .horizontal-images-align {
+      text-align: center;
+      margin: auto;
+    }
+
+    /* Responsive adjustments for smaller screens */
+    @media (max-width: 991px) {
+      body {
+        margin-left: 0; 
+        background-color: #f8f9fa; 
+      }
+      body::before {
+        display: none; /* Hide the fixed white canvas on small screens */
+      }
+      #side-menu-container {
+        position: static;
+        width: 100%;
+        height: auto;
+        box-shadow: none;
+        border-bottom: 1px solid #e9ecef;
+        margin-bottom: 20px;
+        padding: 10px 0;
+      }
+      #side-menu {
+        padding: 0 15px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      #side-menu .nav-pills > li {
+        margin: 5px;
+      }
+      .report-main-content {
+        max-width: 100%;
+        margin: 20px 15px; /* Add horizontal margin for small screens */
+        padding: 15px;
+      }
+      .horizontal-tables {
+        box-shadow: none; /* Remove shadow on small screens if desired, or adjust */
+        padding: 15px; /* Adjust padding for small screens */
+      }
+      .horizontal-tables table {
+        max-width: 100%;
+      }
+    }
+
+    /* Ensure scroll behavior for anchor links is smooth */
+    html {
+      scroll-behavior: smooth;
+    }
+  </style>
+</head>
+<body>
+  <div id="side-menu-container">
+    <ul id="side-menu" class='nav nav-pills nav-stacked'>
+      HTML_ELEMENT_SIDE_MENU
+    </ul>
+  </div>
+
+  <div class='report-main-content'>
+    <div class="title-element">
+      HTML_ELEMENT_TITLE
+    </div>
+    HTML_ELEMENT_SECTION
+  </div>
+</body>
+</html>
