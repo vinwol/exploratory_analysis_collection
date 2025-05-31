@@ -23,13 +23,13 @@ Application of Principal Component Analysis (PCA), Independent Component Analysi
 
 ## R Packages for Data Analysis
 
-Incomplete list of R packages useful for various stages of the exploratory data analysis
+Incomplete list of R packages useful for various stages of the exploratory data analysis.
 
 ## R Packages for Automatic EDA
 
 * [`DataExplorer`](https://cran.r-project.org/web/packages/DataExplorer/index.html) 
 * [`SmartEDA`](https://cran.r-project.org/web/packages/SmartEDA/index.html) 
-* [`AEDA`](https://cran.r-project.org/web/packages/AEDA/index.html) 
+* [`AEDA`](https://github.com/tuanle618/AEDA) 
 * [`dataMaid`](https://cran.r-project.org/web/packages/dataMaid/index.html) 
 * [`dlookr`](https://cran.r-project.org/web/packages/dlookr/index.html) 
 * [`ExPanDaR`](https://cran.r-project.org/web/packages/ExPanDaR/index.html) 
@@ -85,10 +85,10 @@ Incomplete list of R packages useful for various stages of the exploratory data 
 ## R Packages for PCA Analysis
 
 * [`DataExplorer`](https://cran.r-project.org/web/packages/DataExplorer/index.html) 
-* [`AEDA`](https://cran.r-project.org/web/packages/AEDA/index.html) 
+* [`AEDA`](https://github.com/tuanle618/AEDl) 
 * [`FactoMineR`](https://cran.r-project.org/web/packages/FactoMineR/index.html) 
 * [`explor`](https://cran.r-project.org/web/packages/explor/index.html) 
-* [`pcaMethods`](https://cran.r-project.org/web/packages/pcaMethods/index.html) 
+* [`pcaMethods`](https://github.com/hredestig/pcaMethods) 
 * [`PCAmixdata`](https://cran.r-project.org/web/packages/PCAmixdata/index.html) 
 * [`fastICA`](https://cran.r-project.org/web/packages/fastICA/index.html) 
 * [`mixOmics`](https://cran.r-project.org/web/packages/mixOmics/index.html) 
